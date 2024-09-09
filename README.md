@@ -2,6 +2,7 @@
 
 URL Jenkins: http://localhost:8070/
 
+
 ## Step 1: Set Up Jenkins Pipeline for Maven
 
 1. Install Required Plugins in Jenkins:
@@ -34,7 +35,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/your-repo/spark-scala-example.git'
+                git branch: 'main', url: 'https://github.com/DiogoRSC/jenkins-project.git'
             }
         }
 
@@ -90,37 +91,33 @@ pipeline {
 }
 ```
 
+
 ## Step 2: Configure Jenkins Job
-Source Code Management:
-
-Go to the Pipeline section and select Pipeline script from SCM.
-Choose Git as the SCM.
-Enter your repository URL and the correct branch (e.g., main).
-Build Triggers:
-
-You can trigger the pipeline based on changes in the repository (poll SCM or webhook) or scheduled builds (cron job).
-Build Environment:
-
-Add any build environment configurations, such as cleaning the workspace before starting or setting specific environment variables.
-Post-build Actions:
-
-Configure post-build actions like sending notifications, deploying artifacts, etc.
+1. Source Code Management:
+  - Go to the Pipeline section and select Pipeline script from SCM.
+  - Choose Git as the SCM.
+  - Enter your repository URL and the correct branch (e.g., main).
+2. Build Triggers:
+  - You can trigger the pipeline based on changes in the repository (poll SCM or webhook) or scheduled builds (cron job).
+3. Build Environment:
+  - Add any build environment configurations, such as cleaning the workspace before starting or setting specific environment variables.
+4. Post-build Actions:
+  - Configure post-build actions like sending notifications, deploying artifacts, etc.
 
 
 ## Step 3: Running the Jenkins Job
-After the setup is done, run the job manually or based on triggers.
-Jenkins will:
-Checkout your code.
-Build the Scala project using Maven.
-Run the tests and archive results.
-Package the project as a JAR.
-Optionally, deploy the JAR to a Spark cluster or another environment.
+1. After the setup is done, run the job manually or based on triggers.
+  - Jenkins will:
+    - Checkout your code.
+    - Build the Scala project using Maven.
+    - Run the tests and archive results.
+    - Package the project as a JAR.
+    - Optionally, deploy the JAR to a Spark cluster or another environment.
 
 
 ## Step 4: Deployment
-To deploy your Spark application, you can:
-
-Use Spark Submit in the Deploy stage of the pipeline:
+1. To deploy your Spark application, you can:
+  - Use Spark Submit in the Deploy stage of the pipeline:
 
 ```shell
 sh """
