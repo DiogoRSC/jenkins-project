@@ -23,6 +23,15 @@ pipeline {
             }
         }
 
+        //SonarQube Example
+        //stage('SonarQube Analysis') {
+            //steps {
+                //withSonarQubeEnv('SonarQube') {
+                    //sh 'mvn sonar:sonar'
+                //}
+            //}
+        //}
+
         stage('Test') {
             steps {
                 sh 'mvn test'
