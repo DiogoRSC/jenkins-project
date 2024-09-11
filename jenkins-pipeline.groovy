@@ -15,7 +15,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: GIT_BRANCH, url: $GIT_REPO_URL
+                git branch: env.GIT_BRANCH, url: env.GIT_REPO_URL
             }
         }
 
@@ -65,14 +65,14 @@ pipeline {
                 script {
                     echo 'Deploying JAR to Git repository...'
 
-                    // Clone the Git repository
+                   // Clone the Git repository
                     sh """
-                        git clone $GIT_REPO_URL deploy-repo
+                        git clone ${env.GIT_REPO_URL} deploy-repo
                         cd deploy-repo
-                        git checkout $GIT_BRANCH
+                        git checkout ${env.GIT_BRANCH}
                     """
 
-                    // Copy the JAR file to the cloned repo
+                     // Copy the JAR file to the cloned repo
                     sh """
                         cp target/my-app.jar deploy-repo/
                         cd deploy-repo
@@ -80,12 +80,14 @@ pipeline {
                         git commit -m 'Deploy JAR file from Jenkins pipeline'
                     """
 
-                    // Push the changes to the repository
-                    withCredentials([usernamePassword(credentialsId: 'git-credentials-id', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
+                    // Use the GitHub PAT to push the changes
+                    withCredentials([usernamePassword(credentialsId: 'github-pat-credentials', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_TOKEN')]) {
                         sh """
-                            git remote set-url origin https://$GIT_USERNAME:$GIT_PASSWORD@github.com/your-username/your-deploy-repo.git
-                            git push origin $GIT_BRANCH
+                            cd deploy-repo
+                            git remote set-url origin https://$GIT_USERNAME:$GIT_TOKEN@github.com/DiogoRSC/jenkins-project.git
+                            git push origin ${env.GIT_BRANCH}
                         """
+                    }
                     echo 'Deploy to Git Complete'
                 }
             }
