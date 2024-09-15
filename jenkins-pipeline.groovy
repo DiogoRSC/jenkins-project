@@ -10,11 +10,13 @@ pipeline {
         MAVEN_OPTS = "-Xms256m -Xmx512m"
         GIT_REPO_URL = 'https://github.com/DiogoRSC/jenkins-project.git' // Git repo to push JAR
         GIT_BRANCH = 'main' // Branch to deploy the JAR
+        JAR_FILE = 'target/my-app.jar' // Adjust the JAR file path if necessary
     }
 
     stages {
         stage('Checkout') {
             steps {
+                echo 'Checking out the code...'
                 git branch: env.GIT_BRANCH, url: env.GIT_REPO_URL
             }
         }
@@ -38,9 +40,9 @@ pipeline {
 
         stage('Test') {
             steps {
-                echo 'Testing ...'
+                echo 'Running tests...'
                 sh 'mvn test'
-                echo 'Test Complete'
+                echo 'Tests Complete'
             }
             post {
                 always {
@@ -51,12 +53,16 @@ pipeline {
 
         stage('Package') {
             steps {
+                echo 'Packaging...'
                 sh 'mvn package'
-            }
-            post {
-                success {
-                    archiveArtifacts artifacts: '**/target/*.jar', allowEmptyArchive: true
-                }
+                echo 'Package Complete'
+ // Check if the JAR file was created successfully
+                sh """
+                    if [ ! -f "${env.JAR_FILE}" ]; then
+                        echo "JAR file not found!"
+                        exit 1
+                    fi
+                """
             }
         }
 
@@ -74,9 +80,9 @@ pipeline {
 
                      // Copy the JAR file to the cloned repo
                     sh """
-                        cp target/my-app.jar deploy-repo/
+                        cp ${env.JAR_FILE} deploy-repo/
                         cd deploy-repo
-                        git add my-app.jar
+                        git add jenkins-project-0.0.1-SNAPSHOT.jar
                         git commit -m 'Deploy JAR file from Jenkins pipeline'
                     """
 
